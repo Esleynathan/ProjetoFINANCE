@@ -12,9 +12,22 @@
     <br>
     <div class="container">
         <div class="row">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
             <div class="col-md-5">
                 <p class="fonte-destaque">Suas contas</p>
                 <hr>
+                {% for conta in contas %}
+                    <div class="lista-contas-main">
+                        <span><img width="10%" src="{{conta.icone.url}}">&nbsp&nbsp{{conta}}</span>
+
+                        <span class="total-conta positivo ">R$ {{conta.valor}}</span>
+                    </div>
+                    <br>
+                {% endfor %}
 
                 <div class="contas">
 
@@ -31,7 +44,7 @@
 
                 <hr>
                 <span class="fonte-destaque">Total:</span>
-                <span class="positivo total-conta font-destaque">R$ 1.800,00</span>
+                <span class="positivo total-conta font-destaque">R$ {{total_contas}}</span>
             </div>
 
             <div class="col-md-2"></div>
