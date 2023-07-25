@@ -21,7 +21,6 @@ def gerenciar(request):
     
     total_contas = calcula_total(contas, 'valor')
 
-    print(total_contas)
     return render(request, 'gerenciar.html', {'contas': contas, 'total_contas': total_contas, 'categorias': categorias})
 
 def cadastrar_banco(request):
