@@ -23,3 +23,8 @@ def update_valor_categoria(request, id):
 
     messages.add_message(request, constants.SUCCESS, 'Planejamento de valor da categoria atualizado com sucesso')
     return JsonResponse({'status': 'Sucesso'})
+
+def ver_planejamento(request):
+    categorias = Categoria.objects.all()
+    #TODO: Realizar barra com total
+    return render(request, 'ver_planejamento.html', {'categorias': categorias})

@@ -45,11 +45,9 @@ def novo_valor(request):
         else:
             conta.valor -= int(valor)
 
-        conta.save()
+        conta.save()        
 
-        
-
-        messages.add_message(request, constants.SUCCESS, 'Categoria cadastrada com sucesso')
+        messages.add_message(request, constants.SUCCESS, 'Receita/Despesa cadastrada com sucesso')
         return redirect('/extrato/novo_valor')
 
 def view_extrato(request):

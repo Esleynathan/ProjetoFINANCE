@@ -10,13 +10,14 @@
 
 {% block 'body' %}
 
-    <div class="container">        
+    <div class="container">      
+
+        <br>
         {% if messages %}
         {% for message in messages %}
             <div class="alert {{ message.tags }}">{{ message }}</div>
         {% endfor %}
         {% endif %}
-        <br>
         <br>
         <p class="fonte-destaque">Definir planejamento</p>
         <div class="card">
@@ -57,13 +58,16 @@
                 },
                 body: JSON.stringify({novo_valor: valor})
                 
-            }).then(function(result){
+            }).then(function(result){            
                 return result.json()
 
             }).then(function(data){
-                console.log(data)
-
+                console.log(data) 
+                self.location.reload();
             })
+            
+
+
 
         }
 
