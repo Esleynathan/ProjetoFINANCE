@@ -6,11 +6,27 @@ from django.contrib.messages import constants
 from .utils import calcula_total
 from extrato.models import Valores
 from django.db.models import Sum
+from datetime import datetime
+
 
 def home(request):
+    valores = Valores.objects.filter(data__month=datetime.now().month)
+    entradas = valores.filter(tipo='E')
+    saidas = valores.filter(tipo='S')
+
+    total_entradas = calcula_total(entradas, 'valor')
+    total_saidas = calcula_total(saidas, 'valor')
+
     contas = Conta.objects.all()
     saldo_total = calcula_total(contas, 'valor')
-    return render(request, 'home.html', {'contas': contas, 'saldo_total': saldo_total,})
+
+    percentual_gastos_essenciais, percentual_gastos_nao_essenciais = calcula_equilibrio_financeiro()
+    return render(request, 'home.html', {'contas': contas,
+                                        'saldo_total': saldo_total, 
+                                        'total_entradas': total_entradas, 
+                                        'total_saidas': total_saidas,
+                                        'percentual_gastos_essenciais': int(percentual_gastos_essenciais),
+                                        'percentual_gastos_nao_essenciais': int(percentual_gastos_nao_essenciais)})
 
 def gerenciar(request):
     contas = Conta.objects.all()
@@ -87,3 +103,20 @@ def dashboard(request):
         dados[categoria.categoria] = Valores.objects.filter(categoria=categoria).aggregate(Sum('valor'))['valor__sum']
 
     return render(request, 'dashboard.html', {'labels': list(dados.keys()), 'values': list(dados.values())})
+
+
+def calcula_equilibrio_financeiro():
+    gastos_essenciais = Valores.objects.filter(data__month=datetime.now().month).filter(tipo='S').filter(categoria__essencial=True)
+    gastos_nao_essenciais = Valores.objects.filter(data__month=datetime.now().month).filter(tipo='S').filter(categoria__essencial=False)
+
+    total_gastos_essenciais = calcula_total(gastos_essenciais, 'valor')
+    total_gastos_nao_essenciais = calcula_total(gastos_nao_essenciais, 'valor')
+
+    total = total_gastos_essenciais + total_gastos_nao_essenciais
+    try:
+        percentual_gastos_essenciais = total_gastos_essenciais * 100 / total
+        percentual_gastos_nao_essenciais = total_gastos_nao_essenciais * 100 / total
+
+        return percentual_gastos_essenciais, percentual_gastos_nao_essenciais
+    except:
+        return 0, 0
